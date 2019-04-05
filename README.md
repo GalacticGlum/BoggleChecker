@@ -1,2 +1,2 @@
 # BoggleChecker
-Determines whether a list of words exists on a boggle word. ICS4U1 Assignment 3
+Determines whether a list of words exists on a boggle board. ICS4U1 Assignment 3
