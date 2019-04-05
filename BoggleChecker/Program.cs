@@ -153,6 +153,7 @@ namespace BoggleChecker
         /// <param name="args">The command-line arguments.</param>
         private static void Main(string[] args)
         {
+            Console.WriteLine("What is the input filename?");
             string filepath = Console.ReadLine();
             if (!File.Exists(filepath)) return;
             
@@ -188,6 +189,9 @@ namespace BoggleChecker
                 string output = outputBuffer.ToString();
 
                 Console.WriteLine(output);
+
+                string filename = Path.GetFileNameWithoutExtension(filepath);
+                File.WriteAllText(filepath.Replace(filename, "ShonVerch_" + filename), output);
             }
         }
 
