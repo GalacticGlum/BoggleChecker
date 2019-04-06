@@ -176,13 +176,16 @@ namespace BoggleChecker
                 StringBuilder outputBuffer = new StringBuilder();
                 int foundCount = 0;
 
+                HashSet<string> resultCache = new HashSet<string>();
+
                 for (int i = 0; i < dictionaryCount; i++)
                 {
                     string word = reader.ReadLine();
-                    if (!FindWord(word)) continue;
+                    if (resultCache.Contains(word) || !FindWord(word)) continue;
 
                     foundCount += 1;
                     outputBuffer.AppendLine(word);
+                    resultCache.Add(word);
                 }
 
                 outputBuffer.Insert(0, string.Concat(foundCount, Environment.NewLine));
@@ -195,41 +198,58 @@ namespace BoggleChecker
             }
         }
 
-        private static bool FindWord(string word, Tile currentTile = null, int remainingWordLength = 0, HashSet<Tile> visited = null)
+
+        private static bool FindWord(string word)
         {
-            if (visited == null)
+            for (int y = 0; y < board.Size; y++)
             {
-                visited = new HashSet<Tile>();
-            }
-
-            if (currentTile == null)
-            {
-                Tile startingTile = FindStartingTile(word);
-                currentTile = startingTile ?? board[0, 0];
-                if (startingTile != null)
+                for (int x = 0; x < board.Size; x++)
                 {
-                    remainingWordLength += 1;
-                }
+                    Tile currentTile = board[x, y];
+                    if (currentTile.Character != word[0]) continue;
 
-                visited.Add(currentTile);
+                    HashSet<char> visited = new HashSet<char>
+                    {
+                        word[0]
+                    };
+
+                    if (Search(word, currentTile, 1, visited))
+                    {
+                        return true;
+                    }
+                }
             }
 
+            return false;
+        }
+
+        private static bool Search(string word, Tile currentTile, int remainingWordLength, HashSet<char> visited)
+        {
             if (remainingWordLength == word.Length) return true;
+
             foreach (Tile neighbour in board.GetNeighbours(currentTile))
             {
                 // The neighbour doesn't exist
                 if (neighbour == null) continue;
-                if (neighbour.Character != word[remainingWordLength] || visited.Contains(neighbour)) continue;
+                if (neighbour.Character != word[remainingWordLength] || visited.Contains(neighbour.Character)) continue;
 
-                visited.Add(neighbour);
-                return FindWord(word, neighbour, remainingWordLength + 1, visited);
+                // Shallow copy of the visited collection for the next recursive branch
+                HashSet<char> newVisited = new HashSet<char>(visited)
+                {
+                    neighbour.Character
+                };
+
+                if (Search(word, neighbour, remainingWordLength + 1, newVisited))
+                {
+                    return true;
+                }
             }
 
             return false;
         }
 
         /// <summary>
-        /// Retrives the first <see cref="Tile"/> whose character is the
+        /// Retrieves the first <see cref="Tile"/> whose character is the
         /// first character of the specified word.
         /// </summary>
         /// <param name="word">The word.</param>
