@@ -3,14 +3,13 @@
  * File Name: Program.cs
  * Project Name: BoggleChecker
  * Creation Date: 04/05/19
- * Modified Date: 04/06/19
+ * Modified Date: 04/09/19
  * Description: Determines whether a list of words exists on a boggle board.
  */
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace BoggleChecker
 {
@@ -197,6 +196,7 @@ namespace BoggleChecker
 
                 string filename = Path.GetFileNameWithoutExtension(filepath);
                 File.WriteAllText(filepath.Replace(filename, "ShonVerch_" + filename), output);
+                Console.ReadLine();
             }
         }
 
