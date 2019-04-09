@@ -175,14 +175,7 @@ namespace BoggleChecker
                 }
 
                 int dictionaryCount = int.Parse(reader.ReadLine());
-
-                // We use a string builder to conveniently build the output;
-                // however, this does come at a speed and memory overhead.
-                // While minimal, the string builder could be replaced with
-                // a more direct method of output (its effect really is
-                // miniscule though).
-                StringBuilder outputBuffer = new StringBuilder();
-
+                
                 // A set to track duplicate word queries
                 HashSet<string> resultCache = new HashSet<string>();
 
@@ -190,13 +183,15 @@ namespace BoggleChecker
                 {
                     string word = reader.ReadLine();
                     if (resultCache.Contains(word) || !FindWord(word)) continue;
-
-                    outputBuffer.AppendLine(word);
                     resultCache.Add(word);
                 }
 
-                outputBuffer.Insert(0, string.Concat(resultCache.Count, Environment.NewLine));
-                string output = outputBuffer.ToString();
+                // Build the output string
+                string output = $"{resultCache.Count}\n";
+                foreach (string word in resultCache)
+                {
+                    output += $"{word}\n";
+                }
 
                 Console.WriteLine(output);
 
