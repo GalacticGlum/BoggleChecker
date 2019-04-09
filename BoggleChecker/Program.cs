@@ -208,9 +208,9 @@ namespace BoggleChecker
                     Tile currentTile = board[x, y];
                     if (currentTile.Character != word[0]) continue;
 
-                    HashSet<char> visited = new HashSet<char>
+                    HashSet<Tile> visited = new HashSet<Tile>
                     {
-                        word[0]
+                        currentTile
                     };
 
                     if (Search(word, currentTile, 1, visited))
@@ -223,7 +223,7 @@ namespace BoggleChecker
             return false;
         }
 
-        private static bool Search(string word, Tile currentTile, int remainingWordLength, HashSet<char> visited)
+        private static bool Search(string word, Tile currentTile, int remainingWordLength, HashSet<Tile> visited)
         {
             if (remainingWordLength == word.Length) return true;
 
@@ -231,12 +231,12 @@ namespace BoggleChecker
             {
                 // The neighbour doesn't exist
                 if (neighbour == null) continue;
-                if (neighbour.Character != word[remainingWordLength] || visited.Contains(neighbour.Character)) continue;
+                if (neighbour.Character != word[remainingWordLength] || visited.Contains(neighbour)) continue;
 
                 // Shallow copy of the visited collection for the next recursive branch
-                HashSet<char> newVisited = new HashSet<char>(visited)
+                HashSet<Tile> newVisited = new HashSet<Tile>(visited)
                 {
-                    neighbour.Character
+                    neighbour
                 };
 
                 if (Search(word, neighbour, remainingWordLength + 1, newVisited))
