@@ -3,7 +3,7 @@
  * File Name: Program.cs
  * Project Name: BoggleChecker
  * Creation Date: 04/05/19
- * Modified Date: 04/05/19
+ * Modified Date: 04/06/19
  * Description: Determines whether a list of words exists on a boggle board.
  */
 
@@ -155,13 +155,16 @@ namespace BoggleChecker
         {
             Console.WriteLine("What is the input filename?");
             string filepath = Console.ReadLine();
+
             if (!File.Exists(filepath)) return;
             
+            // Open and read the input data file.
             using (StreamReader reader = new StreamReader(new FileStream(filepath, FileMode.Open)))
             {
                 int boardSize = int.Parse(reader.ReadLine());
                 board = new Board(boardSize);
 
+                // Initialize the board.
                 for (int y = 0; y < boardSize; y++)
                 {
                     string[] line = reader.ReadLine().Split(' ');
@@ -173,9 +176,14 @@ namespace BoggleChecker
 
                 int dictionaryCount = int.Parse(reader.ReadLine());
 
+                // We use a string builder to conveniently build the output;
+                // however, this does come at a speed and memory overhead.
+                // While minimal, the string builder could be replaced with
+                // a more direct method of output (its effect really is
+                // miniscule though).
                 StringBuilder outputBuffer = new StringBuilder();
-                int foundCount = 0;
 
+                // A set to track duplicate word queries
                 HashSet<string> resultCache = new HashSet<string>();
 
                 for (int i = 0; i < dictionaryCount; i++)
@@ -183,12 +191,11 @@ namespace BoggleChecker
                     string word = reader.ReadLine();
                     if (resultCache.Contains(word) || !FindWord(word)) continue;
 
-                    foundCount += 1;
                     outputBuffer.AppendLine(word);
                     resultCache.Add(word);
                 }
 
-                outputBuffer.Insert(0, string.Concat(foundCount, Environment.NewLine));
+                outputBuffer.Insert(0, string.Concat(resultCache.Count, Environment.NewLine));
                 string output = outputBuffer.ToString();
 
                 Console.WriteLine(output);
@@ -198,9 +205,16 @@ namespace BoggleChecker
             }
         }
 
-
+        /// <summary>
+        /// Determine whether the specified word exists on the board.
+        /// </summary>
+        /// <param name="word">The word to query/</param>
+        /// <returns>A boolean value indicating whether the specified word exists on the board: true if it does, false otherwise.</returns>
         private static bool FindWord(string word)
         {
+            // Find the tiles on the board whose
+            // character is the same as the first character
+            // of the specified word.
             for (int y = 0; y < board.Size; y++)
             {
                 for (int x = 0; x < board.Size; x++)
@@ -213,61 +227,49 @@ namespace BoggleChecker
                         currentTile
                     };
 
-                    if (Search(word, currentTile, 1, visited))
-                    {
-                        return true;
-                    }
+                    if (Search(word, currentTile, 1, visited)) return true;
                 }
             }
 
-            return false;
+            // If we couldn't find any tile that starts with the same
+            // character as our word, start from the first tile (0, 0).
+            return Search(word, board[0, 0], 0, new HashSet<Tile>());
         }
 
         private static bool Search(string word, Tile currentTile, int remainingWordLength, HashSet<Tile> visited)
         {
+            // When we have reached a search depth that is the length of
+            // the word we are searching for, we know that we have found
+            // the word: return true.
             if (remainingWordLength == word.Length) return true;
 
+            // Check each ordinal neighbour to the current tile
             foreach (Tile neighbour in board.GetNeighbours(currentTile))
             {
-                // The neighbour doesn't exist
+                /*
+                 * Skip this neighbour if:
+                 *  a) it doesn't exist (i.e. is null)
+                 *  b) its character value is not equal to the character
+                 *     that we are currently looking for
+                 *  c) we have already visited it
+                 */
                 if (neighbour == null) continue;
                 if (neighbour.Character != word[remainingWordLength] || visited.Contains(neighbour)) continue;
-
+                
                 // Shallow copy of the visited collection for the next recursive branch
+                // We can't share the same visited set since multiple branches visited
+                // different tiles.
                 HashSet<Tile> newVisited = new HashSet<Tile>(visited)
                 {
                     neighbour
                 };
 
-                if (Search(word, neighbour, remainingWordLength + 1, newVisited))
-                {
-                    return true;
-                }
+                // If we found something in the next recursive branch, return true in this one.
+                if (Search(word, neighbour, remainingWordLength + 1, newVisited)) return true;
             }
 
+            // We didn't find anything in any of the ordinal neighbours so return false.
             return false;
-        }
-
-        /// <summary>
-        /// Retrieves the first <see cref="Tile"/> whose character is the
-        /// first character of the specified word.
-        /// </summary>
-        /// <param name="word">The word.</param>
-        /// <returns>
-        /// A <see cref="Tile"/> value or <value>null</value>
-        /// if no such <see cref="Tile"/> could be found.
-        /// </returns>
-        private static Tile FindStartingTile(string word)
-        {
-            for (int y = 0; y < board.Size; y++)
-            {
-                for (int x = 0; x < board.Size; x++)
-                {
-                    if (board[x, y].Character == word[0]) return board[x, y];
-                }
-            }
-
-            return null;
         }
     }
 }
