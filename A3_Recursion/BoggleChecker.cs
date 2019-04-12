@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Shon Verch
- * File Name: Program.cs
- * Project Name: BoggleChecker
+ * File Name: BoggleChecker.cs
+ * Project Name: A3_Recursion
  * Creation Date: 04/05/19
  * Modified Date: 04/09/19
  * Description: Determines whether a list of words exists on a boggle board.
@@ -237,8 +237,8 @@ namespace BoggleChecker
             }
 
             // If we couldn't find any tile that starts with the same
-            // character as our word, start from the first tile (0, 0).
-            return Search(word, board[0, 0], 0, new HashSet<Tile>());
+            // character as our word then it's a fail!
+            return false;
         }
 
         /// <summary>

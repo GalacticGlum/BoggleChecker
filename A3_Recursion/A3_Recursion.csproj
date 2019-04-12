@@ -7,7 +7,7 @@
     <ProjectGuid>{B73F1395-BD94-48E5-8735-944E88C9A8AA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>BoggleChecker</RootNamespace>
-    <AssemblyName>BoggleChecker</AssemblyName>
+    <AssemblyName>A3_Recursion</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
