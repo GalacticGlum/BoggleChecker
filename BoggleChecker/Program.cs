@@ -177,7 +177,6 @@ namespace BoggleChecker
                 
                 // A set to track duplicate word queries
                 HashSet<string> resultCache = new HashSet<string>();
-
                 for (int i = 0; i < dictionaryCount; i++)
                 {
                     string word = reader.ReadLine();
@@ -192,10 +191,15 @@ namespace BoggleChecker
                     output += $"{word}\n";
                 }
 
+                // Write the output to console and file.
                 Console.WriteLine(output);
 
+                // Extract the filename without the extension and then
+                // replace the filename in the filepath with the output
+                // filename (e.g. "ShonVerch_inputFilename")
                 string filename = Path.GetFileNameWithoutExtension(filepath);
                 File.WriteAllText(filepath.Replace(filename, "ShonVerch_" + filename), output);
+
                 Console.ReadLine();
             }
         }
@@ -204,7 +208,10 @@ namespace BoggleChecker
         /// Determine whether the specified word exists on the board.
         /// </summary>
         /// <param name="word">The word to query/</param>
-        /// <returns>A boolean value indicating whether the specified word exists on the board: true if it does, false otherwise.</returns>
+        /// <returns>
+        /// A boolean value indicating whether the specified word
+        /// exists on the board: true if it does, false otherwise.
+        /// </returns>
         private static bool FindWord(string word)
         {
             // Find the tiles on the board whose
@@ -217,6 +224,9 @@ namespace BoggleChecker
                     Tile currentTile = board[x, y];
                     if (currentTile.Character != word[0]) continue;
 
+                    // Create the visited set and add the current
+                    // tile to it since we are starting on this tile;
+                    // thefore, we cannot visit it again.
                     HashSet<Tile> visited = new HashSet<Tile>
                     {
                         currentTile
@@ -231,6 +241,14 @@ namespace BoggleChecker
             return Search(word, board[0, 0], 0, new HashSet<Tile>());
         }
 
+        /// <summary>
+        /// Search for the specified word, starting from the specified tile.
+        /// </summary>
+        /// <param name="word">The <see cref="string"/> to search for.</param>
+        /// <param name="currentTile">The <see cref="Tile"/> to start the search at.</param>
+        /// <param name="remainingWordLength">The remaining length of the search word.</param>
+        /// <param name="visited">A <see cref="HashSet{T}"/> containing the <see cref="Tile"/>s that have been visited.</param>
+        /// <returns>A boolean value indicating whether the specified word was found.</returns>
         private static bool Search(string word, Tile currentTile, int remainingWordLength, HashSet<Tile> visited)
         {
             // When we have reached a search depth that is the length of
