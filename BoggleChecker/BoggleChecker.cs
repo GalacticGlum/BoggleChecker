@@ -142,7 +142,7 @@ namespace BoggleChecker
     /// <summary>
     /// Determines whether a list of words exists on a boggle board.
     /// </summary>
-    internal class Program
+    internal class BoggleChecker
     {
         private static Board board;
 
